@@ -61,21 +61,6 @@ public class KNN {
         }
     }
 
-    public static void algorithmEfficiency(ArrayList<Activity> trainActivities) throws IOException {
-//        Reader testReader = new Reader("./src/main/resources/testData.xlsx");
-//        ArrayList<Activity> testActivities = new ArrayList<>();
-//        testReader.getData(testActivities);
-//        int numberOfCorrectPredictedActivities = 0;
-//        for (Activity testActivity : testActivities) {
-//            String resultedActivity = runQuery(trainActivities, testActivity.getValues());
-//            if (resultedActivity.equals(testActivity.getActivityName())){
-//                numberOfCorrectPredictedActivities++;
-//            }
-//        }
-//        double rate = ((double) numberOfCorrectPredictedActivities/testReader.getLastRowIndex()) * 100;
-//        System.out.println("The algorithm precision is: " + rate);
-    }
-
     public static String runQuery(ArrayList<Activity> activities, ArrayList<Double> data){
         int k = 21;// # of neighbours
         // List to save the k most probably results

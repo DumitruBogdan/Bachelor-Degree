@@ -46,9 +46,7 @@ public class GPS extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                 if (isGPSEnabled()) {
-
                     getCurrentLocation();
 
                 } else {

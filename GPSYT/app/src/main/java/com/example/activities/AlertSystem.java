@@ -1,5 +1,7 @@
 package com.example.activities;
 
+import static com.example.activities.Home.getPhoneNumber;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,8 +61,8 @@ public class AlertSystem extends AppCompatActivity {
 
             public void onFinish() {
                 getCurrentLocation();
-                text.setText(userLocation);
                 sendSMS();
+                android.os.Process.killProcess(android.os.Process.myPid());
             }
         }.start();
 
@@ -68,7 +70,7 @@ public class AlertSystem extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                finish();
+                android.os.Process.killProcess(android.os.Process.myPid());;
             }
         });
     }
@@ -79,25 +81,24 @@ public class AlertSystem extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
                 if (isGPSEnabled()) {
-
                     getCurrentLocation();
-
                 } else {
-
                     turnOnGPS();
                 }
             }
-            else if (grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                String phoneNo = "0749660135";
-                String message = "Locatia mea curenta este: /n " + userLocation;
-                    SmsManager smsManager = SmsManager.getDefault();
-                    smsManager.sendTextMessage(phoneNo, null, message, null, null);
-                    Toast.makeText(getApplicationContext(), "SMS sent.",
-                            Toast.LENGTH_LONG).show();
-                }
         }
+    }
+
+    public static boolean hasPermissions(Context context, String... PERMISSIONS) {
+        if (context != null && PERMISSIONS != null) {
+            for (String permission: PERMISSIONS){
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
@@ -118,15 +119,12 @@ public class AlertSystem extends AppCompatActivity {
                             @Override
                             public void onLocationResult(@NonNull LocationResult locationResult) {
                                 super.onLocationResult(locationResult);
-                                // LocationServices.getFusedLocationProviderClient(MainActivity.this).removeLocationUpdates(this);
                                 if (locationResult != null && locationResult.getLocations().size() > 0) {
-
                                     int index = locationResult.getLocations().size() - 1;
                                     double latitude = locationResult.getLocations().get(index).getLatitude();
                                     double longitude = locationResult.getLocations().get(index).getLongitude();
 
                                     userLocation = "Latitude: " + latitude + "\n" + "Longitude: " + longitude;
-                                    //AddressText.setTextColor(Color.WHITE);
                                 }
                             }
                         }, Looper.getMainLooper());
@@ -134,8 +132,6 @@ public class AlertSystem extends AppCompatActivity {
             } else {
                 turnOnGPS();
             }
-        } else {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
     }
 
@@ -183,12 +179,11 @@ public class AlertSystem extends AppCompatActivity {
     }
 
     protected void sendSMS() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.SEND_SMS)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.SEND_SMS)) {
-            }
-        }
+        String phoneNo = getPhoneNumber();
+        String message = "I fell down and i did not respond to the automate checking. This is my current location:  " + userLocation;
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(phoneNo, null, message, null, null);
+        Toast.makeText(getApplicationContext(), "SMS sent.",
+                Toast.LENGTH_LONG).show();
     }
 }

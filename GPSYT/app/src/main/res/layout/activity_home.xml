@@ -12,8 +12,8 @@
         android:id="@+id/activityText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
         android:textAlignment="center"
+        android:textColor="@android:color/black"
         android:textSize="19sp" />
 
     <Button
@@ -31,5 +31,21 @@
         android:layout_width="118dp"
         android:layout_height="wrap_content"
         android:text="ToggleButton" />
+
+    <EditText
+        android:id="@+id/phoneNumberText"
+        android:layout_width="323dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="phone"
+        android:minHeight="48dp"
+        android:textAlignment="center"
+        tools:ignore="SpeakableTextPresentCheck" />
+
+    <Button
+        android:id="@+id/phoneNumberButton"
+        android:layout_width="259dp"
+        android:layout_height="wrap_content"
+        android:text="Save phone number" />
 
 </LinearLayout>

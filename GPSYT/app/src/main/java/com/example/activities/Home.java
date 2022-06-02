@@ -1,6 +1,7 @@
 package com.example.activities;
 
 
+import static com.example.activities.AlertSystem.hasPermissions;
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 
@@ -15,16 +16,28 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.function.Function;
@@ -40,6 +53,7 @@ public class Home extends AppCompatActivity {
             Manifest.permission.SEND_SMS,
             Manifest.permission.ACCESS_FINE_LOCATION
     };
+    private static String phoneNumber;
     private final int MAX_LENGTH = 20;
     private final int POSITIONS = 5;
     private ArrayList<Activity> activities = new ArrayList<>();
@@ -48,6 +62,8 @@ public class Home extends AppCompatActivity {
     private TextView activityText;
     private Button alertButton;
     private ToggleButton toggleButton;
+    private Button phoneNumberButton;
+    private TextView phoneNumberText;
     private Queue<String> activitiesCalculated = new LinkedList<>();
 
     @Override
@@ -57,6 +73,8 @@ public class Home extends AppCompatActivity {
         activityText = findViewById(R.id.activityText);
         alertButton = findViewById(R.id.alertSystemButton);
         toggleButton = findViewById(R.id.toggleButton);
+        phoneNumberButton = findViewById(R.id.phoneNumberButton);
+        phoneNumberText = findViewById(R.id.phoneNumberText);
         accelerometer = new Accelerometer(this);
         gyroscope = new Gyroscope(this);
         activities = Parsable.getInstance().getList();
@@ -65,7 +83,8 @@ public class Home extends AppCompatActivity {
         if (!hasPermissions(Home.this,PERMISSIONS)) {
             ActivityCompat.requestPermissions(Home.this, PERMISSIONS,1);
         }
-        
+        readPhoneNumber();
+        phoneNumberText.setText(phoneNumber);
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -106,6 +125,26 @@ public class Home extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(Home.this, AlertSystem.class);
                 startActivity(intent);
+            }
+        });
+
+        phoneNumberButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                File folder = new File(getFilesDir(), "Resources");
+                if (!folder.exists()) {
+                    folder.mkdir();
+                }
+                File file = new File(folder, "phoneNumber.txt");
+                try {
+                    PrintWriter writer = new PrintWriter(file);
+                   phoneNumber = phoneNumberText.getText().toString();
+                    writer.append(phoneNumber);
+                    writer.flush();
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -174,18 +213,21 @@ public class Home extends AppCompatActivity {
         return false;
     }
 
-    private boolean hasPermissions(Context context, String... PERMISSIONS) {
-
-        if (context != null && PERMISSIONS != null) {
-
-            for (String permission: PERMISSIONS){
-
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
+    private void readPhoneNumber(){
+        String ret = "";
+        File folder = new File(getFilesDir(), "Resources");
+        File file = new File(folder, "phoneNumber.txt");
+        try {
+            Scanner myReader = new Scanner(file);
+            if (myReader.hasNextLine())
+            {
+                phoneNumber = myReader.nextLine();
             }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-
-        return true;
+    }
+    public static String getPhoneNumber(){
+        return phoneNumber;
     }
 }
