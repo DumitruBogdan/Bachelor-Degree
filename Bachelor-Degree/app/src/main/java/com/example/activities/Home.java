@@ -80,7 +80,6 @@ public class Home extends AppCompatActivity {
         accelerometer = new Accelerometer(this);
         gyroscope = new Gyroscope(this);
         activities = Parsable.getInstance().getList();
-
         toggleButton.setBackgroundColor(Color.RED);
         if (!hasPermissions(Home.this,PERMISSIONS)) {
             ActivityCompat.requestPermissions(Home.this, PERMISSIONS,1);
@@ -93,6 +92,7 @@ public class Home extends AppCompatActivity {
         hm.put("STANDING", 2);
         hm.put("WALKING", 3);
         LineGraphSeries<DataPoint> series = new LineGraphSeries<>();
+        series.setColor(Color.BLACK);
         graph.addSeries(series);
         updateGraph();
         readPhoneNumber();
@@ -145,6 +145,9 @@ public class Home extends AppCompatActivity {
 
     private void savePhoneNumber() {
         File folder = new File(getFilesDir(), "Resources");
+        if (!folder.exists()) {
+            folder.mkdir();
+        }
         File file = new File(folder, "phoneNumber.txt");
         try {
             PrintWriter writer = new PrintWriter(file);
@@ -250,7 +253,6 @@ public class Home extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_phone_forwarded) {
-
             takePhoneNumber();
             return true;
         }
