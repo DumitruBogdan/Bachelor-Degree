@@ -17,9 +17,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BachelorDegree" >
         <activity
-            android:name=".MainActivity"
-            android:exported="true" />
-        <activity
             android:name=".AlertSystem"
             android:excludeFromRecents="true"
             android:exported="true"

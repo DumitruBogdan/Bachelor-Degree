@@ -57,7 +57,7 @@ public class AlertSystem extends AppCompatActivity {
         countDownTimer = new CountDownTimer(30000, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                text.setText("Time remaining: " + millisUntilFinished / 1000 + "\n If you do not respond, a message will be send!");
+                text.setText("Time remaining: " + millisUntilFinished / 1000 + "\n If you do not respond, a message will be sent!");
             }
 
             public void onFinish() {
@@ -67,13 +67,9 @@ public class AlertSystem extends AppCompatActivity {
             }
         }.start();
 
-        button.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                countDownTimer.cancel();
-                finish();
-            }
+        button.setOnClickListener(view -> {
+            countDownTimer.cancel();
+            finish();
         });
     }
 
@@ -145,26 +141,23 @@ public class AlertSystem extends AppCompatActivity {
         Task<LocationSettingsResponse> result = LocationServices.getSettingsClient(getApplicationContext())
                 .checkLocationSettings(builder.build());
 
-        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
-            @Override
-            public void onComplete(@NonNull Task<LocationSettingsResponse> task) {
-                try {
-                    LocationSettingsResponse response = task.getResult(ApiException.class);
-                    Toast.makeText(AlertSystem.this, "GPS is already turned on", Toast.LENGTH_SHORT).show();
-                } catch (ApiException e) {
-                    switch (e.getStatusCode()) {
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            try {
-                                ResolvableApiException resolvableApiException = (ResolvableApiException) e;
-                                resolvableApiException.startResolutionForResult(AlertSystem.this, 2);
-                            } catch (IntentSender.SendIntentException ex) {
-                                ex.printStackTrace();
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            //Device does not have location
-                            break;
-                    }
+        result.addOnCompleteListener(task -> {
+            try {
+                LocationSettingsResponse response = task.getResult(ApiException.class);
+                Toast.makeText(AlertSystem.this, "GPS is already turned on", Toast.LENGTH_SHORT).show();
+            } catch (ApiException e) {
+                switch (e.getStatusCode()) {
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        try {
+                            ResolvableApiException resolvableApiException = (ResolvableApiException) e;
+                            resolvableApiException.startResolutionForResult(AlertSystem.this, 2);
+                        } catch (IntentSender.SendIntentException ex) {
+                            ex.printStackTrace();
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        //Device does not have location
+                        break;
                 }
             }
         });
@@ -182,7 +175,7 @@ public class AlertSystem extends AppCompatActivity {
 
     protected void sendSMS() {
         String phoneNo = getPhoneNumber();
-        String message = "I fell down and i did not respond to the automate checking. This is my current location:  " + userLocation;
+        String message = "I fell down and i did not respond to the automated checking. This is my current location:  " + userLocation;
         SmsManager smsManager = SmsManager.getDefault();
         smsManager.sendTextMessage(phoneNo, null, message, null, null);
         Toast.makeText(getApplicationContext(), "SMS sent.",

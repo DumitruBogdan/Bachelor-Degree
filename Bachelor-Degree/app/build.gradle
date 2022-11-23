@@ -4,11 +4,9 @@ plugins {
 
 android {
     compileSdk 31
-
     packagingOptions {
         exclude 'META-INF/INDEX.LIST'
     }
-
     defaultConfig {
         applicationId "com.example.bachelorDegree"
         minSdk 24
@@ -18,7 +16,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false

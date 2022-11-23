@@ -1,10 +1,7 @@
 package sensors;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.hardware.SensorEvent;
@@ -16,14 +13,14 @@ public class Gyroscope implements SensorEventListener {
 
     private ArrayList<Double> gyroscopeValues = new ArrayList<>();
     private SensorManager manager;
-    private Sensor accelerometer;
+    private Sensor gyroscope;
     Activity foo;
 
     public Gyroscope(Activity foo) {
         this.foo = foo;
         manager = (SensorManager) this.foo.getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = manager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
-        manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+        gyroscope = manager.getSensorList(Sensor.TYPE_GYROSCOPE).get(0);
+        manager.registerListener(this, gyroscope, SensorManager.SENSOR_DELAY_GAME);
     }
 
     @Override

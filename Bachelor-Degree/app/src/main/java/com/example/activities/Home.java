@@ -76,7 +76,7 @@ public class Home extends AppCompatActivity {
         activityText = findViewById(R.id.activityText);
         alertButton = findViewById(R.id.alertSystemButton);
         toggleButton = findViewById(R.id.toggleButton);
-        graph = (GraphView) findViewById(R.id.graph);
+        graph = findViewById(R.id.graph);
         accelerometer = new Accelerometer(this);
         gyroscope = new Gyroscope(this);
         activities = Parsable.getInstance().getList();
@@ -112,13 +112,10 @@ public class Home extends AppCompatActivity {
                         while (toggleButton.isChecked() && !flag) {
                             try {
                                 String resultedActivity = executeTask();
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        activityText.setText("The last activity detected is: \n" + resultedActivity);
-                                        series.appendData(new DataPoint(second[0], hm.get(resultedActivity)), true, 10);
-                                        second[0]++;
-                                    }
+                                runOnUiThread(() -> {
+                                    activityText.setText("The last activity detected is: \n" + resultedActivity);
+                                    series.appendData(new DataPoint(second[0], hm.get(resultedActivity)), true, 10);
+                                    second[0]++;
                                 });
                                 checkFullList();
                                 flag = fallDetection();
@@ -134,12 +131,9 @@ public class Home extends AppCompatActivity {
             }
         });
 
-        alertButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Home.this, AlertSystem.class);
-                startActivity(intent);
-            }
+        alertButton.setOnClickListener(view -> {
+            Intent intent = new Intent(Home.this, AlertSystem.class);
+            startActivity(intent);
         });
     }
 
@@ -269,19 +263,23 @@ public class Home extends AppCompatActivity {
         input.setHint(phoneNumber);
         builder.setView(input);
 
-        builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                phoneNumber = input.getText().toString();
+        builder.setPositiveButton("Update", (dialog, which) -> {
+            String inputText = input.getText().toString();
+            String spanner = "^\\s*(?:\\+?(\\d{1,3}))?[-. (]*(\\d{3})[-. )]*(\\d{3})[-. ]*(\\d{4})(?: *x(\\d+))?\\s*$";
+            if (inputText.matches(spanner)) {
+                phoneNumber = inputText;
                 savePhoneNumber();
             }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
+            else {
+                AlertDialog alertDialog = new AlertDialog.Builder(Home.this).create();
+                alertDialog.setTitle("Warning");
+                alertDialog.setMessage("The phone number must have 10 digits!");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        (dialog1, which1) -> dialog1.dismiss());
+                alertDialog.show();
             }
         });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
 
         builder.show();
     }

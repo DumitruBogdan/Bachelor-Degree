@@ -56,7 +56,6 @@ public class KNN {
             Random generator = new Random();
             // Get random number 0 <= randomIndex < size of mostFrequentActivitiesIndexes
             int randomIndex = generator.nextInt(mostFrequentActivitiesIndexes.length);
-            //System.out.println("random index: " + randomIndex);
             return uniqueValues[mostFrequentActivitiesIndexes[randomIndex]];
         }
     }
@@ -77,7 +76,6 @@ public class KNN {
         resultList.sort(new DistanceComparator());
         String[] ss = new String[k];
         for (int x = 0; x < k; x++) {
-            //System.out.println(resultList.get(x).activityName + " .... " + resultList.get(x).distance);
             // Get the activity name of k nearest instances (activities) from the list into an array
             ss[x] = resultList.get(x).activityName;
         }
