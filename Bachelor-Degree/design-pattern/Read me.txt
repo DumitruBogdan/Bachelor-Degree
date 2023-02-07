@@ -1,0 +1,2 @@
+Ca design pattern implementat este prezent "Singleton". Acesta a fost folosit pentru a realiza comunicarea intre 2 activity-uri: SplashScreen si Home. 
+In SplashScreen sunt preluate obiectele necesare algoritmului de machine learning kNN, iar in Home acestea sunt accesate. 
